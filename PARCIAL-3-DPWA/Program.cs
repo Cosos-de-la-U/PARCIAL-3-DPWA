@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using PARCIAL_3_DPWA.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,12 +11,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //DI
-/*builder.Services.AddDbContext<PubContext>(options =>
+builder.Services.AddDbContext<railwayContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PubContext") ??
+    options.UseNpgsql(builder.Configuration.GetConnectionString("railContext") ??
                          throw new InvalidOperationException());
 });
-*/
 
 var app = builder.Build();
 
