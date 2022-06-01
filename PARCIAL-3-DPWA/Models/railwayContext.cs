@@ -39,12 +39,12 @@ namespace PARCIAL_3_DPWA.Models
 
             modelBuilder.Entity<Certificacion>(entity =>
             {
-                entity.HasKey(e => e.IdCertificacion)
+                entity.HasKey(e => e.Id_certificacion)
                     .HasName("certificacion_pkey");
 
                 entity.ToTable("certificacion");
 
-                entity.Property(e => e.IdCertificacion).HasColumnName("id_certificacion");
+                entity.Property(e => e.Id_certificacion).HasColumnName("id_certificacion");
 
                 entity.Property(e => e.Descripcion).HasColumnName("descripcion");
 
@@ -59,26 +59,17 @@ namespace PARCIAL_3_DPWA.Models
 
             modelBuilder.Entity<CertificacionByUsuario>(entity =>
             {
-                entity.HasKey(e => e.IdCertificacionByUsuario)
+                entity.HasKey(e => e.Id_certificacion_by_Usuario)
                     .HasName("certificacion_by_usuario_pkey");
 
                 entity.ToTable("certificacion_by_usuario");
 
-                entity.Property(e => e.IdCertificacionByUsuario).HasColumnName("id_certificacion_by_usuario");
+                entity.Property(e => e.Id_certificacion_by_Usuario).HasColumnName("id_certificacion_by_usuario");
 
-                entity.Property(e => e.IdCertificacion).HasColumnName("id_certificacion");
+                entity.Property(e => e.Id_certificacion).HasColumnName("id_certificacion");
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
-                entity.HasOne(d => d.IdCertificacionNavigation)
-                    .WithMany(p => p.CertificacionByUsuarios)
-                    .HasForeignKey(d => d.IdCertificacion)
-                    .HasConstraintName("c4");
-
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.CertificacionByUsuarios)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .HasConstraintName("c5");
             });
 
             modelBuilder.Entity<ExperienciaByUsuario>(entity =>
@@ -90,9 +81,9 @@ namespace PARCIAL_3_DPWA.Models
 
                 entity.Property(e => e.IdExperienciaByUsuario).HasColumnName("id_experiencia_by_usuario");
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
-                entity.Property(e => e.NombreProyecto).HasColumnName("nombre_proyecto");
+                entity.Property(e => e.Nombre_proyecto).HasColumnName("nombre_proyecto");
 
                 entity.Property(e => e.Responsabilidades).HasColumnName("responsabilidades");
 
@@ -102,22 +93,18 @@ namespace PARCIAL_3_DPWA.Models
 
                 entity.Property(e => e.Tecnologias).HasColumnName("tecnologias");
 
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.ExperienciaByUsuarios)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .HasConstraintName("c6");
             });
 
             modelBuilder.Entity<GradoAcademicoByUsuario>(entity =>
             {
-                entity.HasKey(e => e.IdGradoAcademicoByUsuario)
+                entity.HasKey(e => e.Id_grado_academico_by_usuario)
                     .HasName("grado_academico_by_usuario_pkey");
 
                 entity.ToTable("grado_academico_by_usuario");
 
-                entity.Property(e => e.IdGradoAcademicoByUsuario).HasColumnName("id_grado_academico_by_usuario");
+                entity.Property(e => e.Id_grado_academico_by_usuario).HasColumnName("id_grado_academico_by_usuario");
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Objetivos).HasColumnName("objetivos");
 
@@ -125,53 +112,40 @@ namespace PARCIAL_3_DPWA.Models
 
                 entity.Property(e => e.Universidad).HasColumnName("universidad");
 
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.GradoAcademicoByUsuarios)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .HasConstraintName("c3");
             });
 
             modelBuilder.Entity<Red>(entity =>
             {
-                entity.HasKey(e => e.IdRed)
+                entity.HasKey(e => e.Id_red)
                     .HasName("red_pkey");
 
                 entity.ToTable("red");
 
-                entity.Property(e => e.IdRed).HasColumnName("id_red");
+                entity.Property(e => e.Id_red).HasColumnName("id_red");
 
                 entity.Property(e => e.Nombre).HasColumnName("nombre");
             });
 
             modelBuilder.Entity<RedByUser>(entity =>
             {
-                entity.HasKey(e => e.IdRedByUser)
+                entity.HasKey(e => e.Id_red_by_user)
                     .HasName("red_by_user_pkey");
 
                 entity.ToTable("red_by_user");
 
-                entity.Property(e => e.IdRedByUser).HasColumnName("id_red_by_user");
+                entity.Property(e => e.Id_red_by_user).HasColumnName("id_red_by_user");
 
                 entity.Property(e => e.Accesslink).HasColumnName("accesslink");
 
-                entity.Property(e => e.IdRed).HasColumnName("id_red");
+                entity.Property(e => e.Id_red).HasColumnName("id_red");
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
-                entity.HasOne(d => d.IdRedNavigation)
-                    .WithMany(p => p.RedByUsers)
-                    .HasForeignKey(d => d.IdRed)
-                    .HasConstraintName("c2");
-
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.RedByUsers)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .HasConstraintName("c1");
             });
 
             modelBuilder.Entity<Usuario>(entity =>
             {
-                entity.HasKey(e => e.IdUsuario)
+                entity.HasKey(e => e.Id_usuario)
                     .HasName("usuario_pkey");
 
                 entity.ToTable("usuario");
@@ -179,10 +153,10 @@ namespace PARCIAL_3_DPWA.Models
                 entity.HasIndex(e => e.Correo, "usuario_correo_key")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UName, "usuario_u_name_key")
+                entity.HasIndex(e => e.U_name, "usuario_u_name_key")
                     .IsUnique();
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+                entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
                 entity.Property(e => e.Apellidos).HasColumnName("apellidos");
 
@@ -192,7 +166,7 @@ namespace PARCIAL_3_DPWA.Models
 
                 entity.Property(e => e.Nombres).HasColumnName("nombres");
 
-                entity.Property(e => e.UName)
+                entity.Property(e => e.U_name)
                     .HasMaxLength(100)
                     .HasColumnName("u_name");
 

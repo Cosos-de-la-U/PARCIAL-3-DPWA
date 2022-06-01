@@ -5,12 +5,11 @@ namespace PARCIAL_3_DPWA.Models
 {
     public partial class GradoAcademicoByUsuario
     {
-        public int IdGradoAcademicoByUsuario { get; set; }
+        public int Id_grado_academico_by_usuario { get; set; }
         public string? Profesion { get; set; }
         public string? Universidad { get; set; }
         public string? Objetivos { get; set; }
-        public int? IdUsuario { get; set; }
+        public int? Id_usuario { get; set; }
 
-        public virtual Usuario? IdUsuarioNavigation { get; set; }
     }
 }
