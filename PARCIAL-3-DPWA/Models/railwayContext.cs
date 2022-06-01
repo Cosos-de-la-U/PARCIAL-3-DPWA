@@ -17,9 +17,12 @@ namespace PARCIAL_3_DPWA.Models
         }
 
         public virtual DbSet<Certificacion> Certificacions { get; set; } = null!;
-        public virtual DbSet<Portafolio> Portafolios { get; set; } = null!;
+        public virtual DbSet<CertificacionByUsuario> CertificacionByUsuarios { get; set; } = null!;
+        public virtual DbSet<ExperienciaByUsuario> ExperienciaByUsuarios { get; set; } = null!;
+        public virtual DbSet<GradoAcademicoByUsuario> GradoAcademicoByUsuarios { get; set; } = null!;
+        public virtual DbSet<Red> Reds { get; set; } = null!;
+        public virtual DbSet<RedByUser> RedByUsers { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
-        public virtual DbSet<UsuarioCertificacion> UsuarioCertificacions { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,102 +39,164 @@ namespace PARCIAL_3_DPWA.Models
 
             modelBuilder.Entity<Certificacion>(entity =>
             {
+                entity.HasKey(e => e.IdCertificacion)
+                    .HasName("certificacion_pkey");
+
                 entity.ToTable("certificacion");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdCertificacion).HasColumnName("id_certificacion");
 
                 entity.Property(e => e.Descripcion).HasColumnName("descripcion");
 
-                entity.Property(e => e.Institucion)
-                    .HasMaxLength(255)
-                    .HasColumnName("institucion");
+                entity.Property(e => e.Institucion).HasColumnName("institucion");
 
-                entity.Property(e => e.LinkAccesso)
-                    .HasMaxLength(255)
-                    .HasColumnName("link_accesso");
+                entity.Property(e => e.Link).HasColumnName("_link");
 
-                entity.Property(e => e.Nombre)
-                    .HasMaxLength(255)
-                    .HasColumnName("nombre");
+                entity.Property(e => e.Nombre).HasColumnName("nombre");
 
-                entity.Property(e => e.Objetivos).HasColumnName("objetivos");
+                entity.Property(e => e.Obtivos).HasColumnName("obtivos");
             });
 
-            modelBuilder.Entity<Portafolio>(entity =>
+            modelBuilder.Entity<CertificacionByUsuario>(entity =>
             {
-                entity.ToTable("portafolio");
+                entity.HasKey(e => e.IdCertificacionByUsuario)
+                    .HasName("certificacion_by_usuario_pkey");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.ToTable("certificacion_by_usuario");
 
-                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
-
-                entity.Property(e => e.Nombre)
-                    .HasMaxLength(255)
-                    .HasColumnName("nombre");
-
-                entity.Property(e => e.Responsabilidades).HasColumnName("responsabilidades");
-
-                entity.Property(e => e.Resumen).HasColumnName("resumen");
-
-                entity.Property(e => e.Rol)
-                    .HasMaxLength(255)
-                    .HasColumnName("rol");
-
-                entity.Property(e => e.Tecnologias).HasColumnName("tecnologias");
-
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.Portafolios)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_usuario_portafolio");
-            });
-
-            modelBuilder.Entity<Usuario>(entity =>
-            {
-                entity.ToTable("usuario");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Apellidos)
-                    .HasMaxLength(255)
-                    .HasColumnName("apellidos");
-
-                entity.Property(e => e.Correo)
-                    .HasMaxLength(255)
-                    .HasColumnName("correo");
-
-                entity.Property(e => e.FotoUrl)
-                    .HasMaxLength(255)
-                    .HasColumnName("foto_url");
-
-                entity.Property(e => e.Introduccion).HasColumnName("introduccion");
-
-                entity.Property(e => e.Nombres)
-                    .HasMaxLength(255)
-                    .HasColumnName("nombres");
-            });
-
-            modelBuilder.Entity<UsuarioCertificacion>(entity =>
-            {
-                entity.ToTable("usuario_certificacion");
-
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.IdCertificacionByUsuario).HasColumnName("id_certificacion_by_usuario");
 
                 entity.Property(e => e.IdCertificacion).HasColumnName("id_certificacion");
 
                 entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
 
                 entity.HasOne(d => d.IdCertificacionNavigation)
-                    .WithMany(p => p.UsuarioCertificacions)
+                    .WithMany(p => p.CertificacionByUsuarios)
                     .HasForeignKey(d => d.IdCertificacion)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_certificacion");
+                    .HasConstraintName("c4");
 
                 entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.UsuarioCertificacions)
+                    .WithMany(p => p.CertificacionByUsuarios)
                     .HasForeignKey(d => d.IdUsuario)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("fk_usuario");
+                    .HasConstraintName("c5");
+            });
+
+            modelBuilder.Entity<ExperienciaByUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdExperienciaByUsuario)
+                    .HasName("experiencia_by_usuario_pkey");
+
+                entity.ToTable("experiencia_by_usuario");
+
+                entity.Property(e => e.IdExperienciaByUsuario).HasColumnName("id_experiencia_by_usuario");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.NombreProyecto).HasColumnName("nombre_proyecto");
+
+                entity.Property(e => e.Responsabilidades).HasColumnName("responsabilidades");
+
+                entity.Property(e => e.Resumen).HasColumnName("resumen");
+
+                entity.Property(e => e.Rol).HasColumnName("rol");
+
+                entity.Property(e => e.Tecnologias).HasColumnName("tecnologias");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.ExperienciaByUsuarios)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .HasConstraintName("c6");
+            });
+
+            modelBuilder.Entity<GradoAcademicoByUsuario>(entity =>
+            {
+                entity.HasKey(e => e.IdGradoAcademicoByUsuario)
+                    .HasName("grado_academico_by_usuario_pkey");
+
+                entity.ToTable("grado_academico_by_usuario");
+
+                entity.Property(e => e.IdGradoAcademicoByUsuario).HasColumnName("id_grado_academico_by_usuario");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.Objetivos).HasColumnName("objetivos");
+
+                entity.Property(e => e.Profesion).HasColumnName("profesion");
+
+                entity.Property(e => e.Universidad).HasColumnName("universidad");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.GradoAcademicoByUsuarios)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .HasConstraintName("c3");
+            });
+
+            modelBuilder.Entity<Red>(entity =>
+            {
+                entity.HasKey(e => e.IdRed)
+                    .HasName("red_pkey");
+
+                entity.ToTable("red");
+
+                entity.Property(e => e.IdRed).HasColumnName("id_red");
+
+                entity.Property(e => e.Nombre).HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<RedByUser>(entity =>
+            {
+                entity.HasKey(e => e.IdRedByUser)
+                    .HasName("red_by_user_pkey");
+
+                entity.ToTable("red_by_user");
+
+                entity.Property(e => e.IdRedByUser).HasColumnName("id_red_by_user");
+
+                entity.Property(e => e.Accesslink).HasColumnName("accesslink");
+
+                entity.Property(e => e.IdRed).HasColumnName("id_red");
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.HasOne(d => d.IdRedNavigation)
+                    .WithMany(p => p.RedByUsers)
+                    .HasForeignKey(d => d.IdRed)
+                    .HasConstraintName("c2");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.RedByUsers)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .HasConstraintName("c1");
+            });
+
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuario)
+                    .HasName("usuario_pkey");
+
+                entity.ToTable("usuario");
+
+                entity.HasIndex(e => e.Correo, "usuario_correo_key")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.UName, "usuario_u_name_key")
+                    .IsUnique();
+
+                entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+                entity.Property(e => e.Apellidos).HasColumnName("apellidos");
+
+                entity.Property(e => e.Correo).HasColumnName("correo");
+
+                entity.Property(e => e.Intro).HasColumnName("intro");
+
+                entity.Property(e => e.Nombres).HasColumnName("nombres");
+
+                entity.Property(e => e.UName)
+                    .HasMaxLength(100)
+                    .HasColumnName("u_name");
+
+                entity.Property(e => e.Urlfoto).HasColumnName("urlfoto");
             });
 
             modelBuilder.HasSequence("chunk_constraint_name", "_timescaledb_catalog");

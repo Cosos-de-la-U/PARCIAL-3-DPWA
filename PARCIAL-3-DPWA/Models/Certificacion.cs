@@ -7,16 +7,16 @@ namespace PARCIAL_3_DPWA.Models
     {
         public Certificacion()
         {
-            UsuarioCertificacions = new HashSet<UsuarioCertificacion>();
+            CertificacionByUsuarios = new HashSet<CertificacionByUsuario>();
         }
 
-        public int Id { get; set; }
-        public string Nombre { get; set; } = null!;
-        public string Institucion { get; set; } = null!;
-        public string Descripcion { get; set; } = null!;
-        public string Objetivos { get; set; } = null!;
-        public string LinkAccesso { get; set; } = null!;
+        public int IdCertificacion { get; set; }
+        public string? Nombre { get; set; }
+        public string? Institucion { get; set; }
+        public string? Link { get; set; }
+        public string? Descripcion { get; set; }
+        public string? Obtivos { get; set; }
 
-        public virtual ICollection<UsuarioCertificacion> UsuarioCertificacions { get; set; }
+        public virtual ICollection<CertificacionByUsuario> CertificacionByUsuarios { get; set; }
     }
 }

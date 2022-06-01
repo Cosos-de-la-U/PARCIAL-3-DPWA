@@ -7,18 +7,23 @@ namespace PARCIAL_3_DPWA.Models
     {
         public Usuario()
         {
-            Portafolios = new HashSet<Portafolio>();
-            UsuarioCertificacions = new HashSet<UsuarioCertificacion>();
+            CertificacionByUsuarios = new HashSet<CertificacionByUsuario>();
+            ExperienciaByUsuarios = new HashSet<ExperienciaByUsuario>();
+            GradoAcademicoByUsuarios = new HashSet<GradoAcademicoByUsuario>();
+            RedByUsers = new HashSet<RedByUser>();
         }
 
-        public int Id { get; set; }
-        public string? FotoUrl { get; set; }
-        public string Nombres { get; set; } = null!;
-        public string Apellidos { get; set; } = null!;
-        public string Correo { get; set; } = null!;
-        public string? Introduccion { get; set; }
+        public int IdUsuario { get; set; }
+        public string? UName { get; set; }
+        public string? Urlfoto { get; set; }
+        public string? Nombres { get; set; }
+        public string? Apellidos { get; set; }
+        public string? Correo { get; set; }
+        public string? Intro { get; set; }
 
-        public virtual ICollection<Portafolio> Portafolios { get; set; }
-        public virtual ICollection<UsuarioCertificacion> UsuarioCertificacions { get; set; }
+        public virtual ICollection<CertificacionByUsuario> CertificacionByUsuarios { get; set; }
+        public virtual ICollection<ExperienciaByUsuario> ExperienciaByUsuarios { get; set; }
+        public virtual ICollection<GradoAcademicoByUsuario> GradoAcademicoByUsuarios { get; set; }
+        public virtual ICollection<RedByUser> RedByUsers { get; set; }
     }
 }
