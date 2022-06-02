@@ -141,6 +141,7 @@ namespace PARCIAL_3_DPWA.Models
 
                 entity.Property(e => e.Id_usuario).HasColumnName("id_usuario");
 
+
             });
 
             modelBuilder.Entity<Usuario>(entity =>

@@ -25,10 +25,10 @@ namespace PARCIAL_3_DPWA.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
         {
-          if (_context.Usuarios == null)
-          {
-              return NotFound();
-          }
+            if (_context.Usuarios == null)
+            {
+                return NotFound($"El usuario no existe 😓");
+            }
             return await _context.Usuarios.ToListAsync();
         }
 
@@ -36,52 +36,75 @@ namespace PARCIAL_3_DPWA.Controllers
         [HttpGet("{uname}")]
         public async Task<ActionResult<UsuarioModel>> GetUsuario(String uname)
         {
-          if (_context.Usuarios == null)
-          {
-              return NotFound($"El usuario {uname} no existe 😓");
-          }
-            //Obteniendo id de usuario
-            var idUsuario = (from u in _context.Usuarios
-                            where u.U_name == uname
-                            select u.Id_usuario).First();
-
-            //Obteniendo datos del usuario
-            var usuario = (from u in _context.Usuarios
-
-                          // Matching certifications
-                          join redU in _context.RedByUsers on u.Id_usuario equals redU.Id_usuario
-                          join red in _context.Reds on redU.Id_red equals red.Id_red
-
-                          // Matching grado
-                          join gradoU in _context.GradoAcademicoByUsuarios on u.Id_usuario equals gradoU.Id_usuario
-
-                          // Matching experience 
-                          join expU in _context.ExperienciaByUsuarios on u.Id_usuario equals expU.Id_usuario
-
-                          // Matching certifications
-                          join certU in _context.CertificacionByUsuarios on u.Id_usuario equals certU.Id_usuario
-                          join cert in _context.Certificacions on certU.Id_certificacion equals cert.Id_certificacion
-                          select new UsuarioModel{
-
-                              Id_usuario = u.Id_usuario,
-                              U_name = u.U_name,
-                              Urlfoto = u.Urlfoto,
-                              Nombres = u.Nombres,
-                              Apellidos = u.Apellidos,
-                              Correo = u.Correo,
-                              Intro = u.Intro,
-                              Redes_sociales = red,
-                              Grado_academico = gradoU,
-                              Certificacion = cert
-
-                          }).ToListAsync();
-
-            if (usuario == null)
+            if (_context.Usuarios == null)
             {
                 return NotFound($"El usuario {uname} no existe 😓");
             }
 
-            return Ok(usuario);
+            //Obteniendo id de usuario
+            var Usuario = await (from u in _context.Usuarios
+                                 where u.U_name == uname
+                                 select u).FirstOrDefaultAsync();
+
+            // Obteniendo redes sociales usuario
+            var RedesUsuario = await (from redU in _context.RedByUsers
+                                      join red in _context.Reds on redU.Id_red equals red.Id_red
+                                      where redU.Id_usuario == Usuario.Id_usuario && red.Id_red == redU.Id_red
+                                      select new RedesModel
+                                      {
+                                          Nombre = red.Nombre,
+                                          Accesslink = redU.Accesslink
+                                      }).ToListAsync();
+
+            // Obteniendo grados academico
+            var GradoAcademicoUsuario = await (from gradU in _context.GradoAcademicoByUsuarios
+                                      where gradU.Id_usuario == Usuario.Id_usuario
+                                      select new GradoAcademicoModel
+                                      {
+                                          Profesion = gradU.Profesion,
+                                          Universidad = gradU.Universidad,
+                                          Objetivos = gradU.Objetivos
+                                      }).FirstAsync();
+
+            // Obteniendo experiencia de usuario
+            var ExperienciaUsuario = await (from expeU in _context.ExperienciaByUsuarios
+                                            where expeU.Id_usuario == expeU.Id_usuario
+                                            select expeU).ToListAsync();
+
+            // Obteniendo certificaciones de usuario
+            var CertificacionUsuario = await (from certiU in _context.CertificacionByUsuarios
+                                              join certi in _context.Certificacions on certiU.Id_certificacion equals certi.Id_certificacion
+                                              where certiU.Id_usuario == Usuario.Id_usuario && certiU.Id_certificacion == certi.Id_certificacion
+                                              select new CertificacionModel
+                                              {
+                                                  Nombre = certi.Nombre,
+                                                  Institucion = certi.Institucion,
+                                                  Link = certi.Link,
+                                                  Descripcion = certi.Descripcion,
+                                                  Objetivos = certi.Obtivos
+                                              }).ToListAsync();
+
+            // Uniendo todo
+            UsuarioModel UserModel = new UsuarioModel
+            {
+                Id_usuario = Usuario.Id_usuario,
+                U_name = Usuario.U_name,
+                Urlfoto = Usuario.Urlfoto,
+                Nombres = Usuario.Nombres,
+                Apellidos = Usuario.Apellidos,
+                Correo = Usuario.Correo,
+                Intro = Usuario.Intro,
+                Redes_sociales = RedesUsuario,
+                Grado_academico = GradoAcademicoUsuario,
+                Certificacion = CertificacionUsuario
+            };
+
+            if (UserModel == null)
+            {
+                return NotFound($"El usuario {uname} no existe 😓");
+            }
+
+            return Ok(UserModel);
         }
 
         // PUT: api/Usuarios/5
@@ -91,7 +114,7 @@ namespace PARCIAL_3_DPWA.Controllers
         {
             if (id != usuario.Id_usuario)
             {
-                return BadRequest();
+                return BadRequest($"La peticion del usuario no procedio 😓");
             }
 
             _context.Entry(usuario).State = EntityState.Modified;
@@ -104,7 +127,7 @@ namespace PARCIAL_3_DPWA.Controllers
             {
                 if (!UsuarioExists(id))
                 {
-                    return NotFound();
+                    return NotFound($"El usuario no existe 😓");
                 }
                 else
                 {
@@ -120,10 +143,10 @@ namespace PARCIAL_3_DPWA.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
-          if (_context.Usuarios == null)
-          {
-              return Problem("Entity set 'railwayContext.Usuarios'  is null.");
-          }
+            if (_context.Usuarios == null)
+            {
+                return Problem("Entity set 'railwayContext.Usuarios'  is null.");
+            }
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
