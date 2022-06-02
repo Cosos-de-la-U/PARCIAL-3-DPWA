@@ -34,7 +34,7 @@ namespace PARCIAL_3_DPWA.Controllers
 
         // GET: api/Usuarios/uname
         [HttpGet("{uname}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(String uname)
+        public async Task<ActionResult<UsuarioModel>> GetUsuario(String uname)
         {
           if (_context.Usuarios == null)
           {
@@ -46,22 +46,42 @@ namespace PARCIAL_3_DPWA.Controllers
                             select u.Id_usuario).First();
 
             //Obteniendo datos del usuario
-            var usuario = from u in _context.Usuarios
+            var usuario = (from u in _context.Usuarios
+
+                          // Matching certifications
                           join redU in _context.RedByUsers on u.Id_usuario equals redU.Id_usuario
+                          join red in _context.Reds on redU.Id_red equals red.Id_red
+
+                          // Matching grado
                           join gradoU in _context.GradoAcademicoByUsuarios on u.Id_usuario equals gradoU.Id_usuario
+
+                          // Matching experience 
                           join expU in _context.ExperienciaByUsuarios on u.Id_usuario equals expU.Id_usuario
+
+                          // Matching certifications
                           join certU in _context.CertificacionByUsuarios on u.Id_usuario equals certU.Id_usuario
-                          join cert in _context.Certificacions on cert.
+                          join cert in _context.Certificacions on certU.Id_certificacion equals cert.Id_certificacion
                           select new UsuarioModel{
 
-                          };
+                              Id_usuario = u.Id_usuario,
+                              U_name = u.U_name,
+                              Urlfoto = u.Urlfoto,
+                              Nombres = u.Nombres,
+                              Apellidos = u.Apellidos,
+                              Correo = u.Correo,
+                              Intro = u.Intro,
+                              Redes_sociales = red,
+                              Grado_academico = gradoU,
+                              Certificacion = cert
+
+                          }).ToListAsync();
 
             if (usuario == null)
             {
                 return NotFound($"El usuario {uname} no existe 😓");
             }
 
-            return await usuario;
+            return Ok(usuario);
         }
 
         // PUT: api/Usuarios/5

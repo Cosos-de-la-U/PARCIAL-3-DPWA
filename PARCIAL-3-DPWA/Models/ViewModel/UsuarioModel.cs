@@ -9,6 +9,8 @@
         public string? Apellidos { get; set; }
         public string? Correo { get; set; }
         public string? Intro { get; set; }
-
+        public virtual Red? Redes_sociales { get; set; }
+        public virtual GradoAcademicoByUsuario? Grado_academico { get; set; }
+        public virtual Certificacion? Certificacion { get; set; }
     }
 }
