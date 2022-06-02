@@ -32,18 +32,18 @@ namespace PARCIAL_3_DPWA.Controllers
             return await _context.Usuarios.ToListAsync();
         }
 
-        // GET: api/Usuarios/uname
-        [HttpGet("{uname}")]
-        public async Task<ActionResult<UsuarioModel>> GetUsuario(String uname)
+        // GET: api/Usuarios/u_name
+        [HttpGet("{u_name}")]
+        public async Task<ActionResult<UsuarioModel>> GetUsuario(String u_name)
         {
             if (_context.Usuarios == null)
             {
-                return NotFound($"El usuario {uname} no existe 😓");
+                return NotFound($"El usuario {u_name} no existe 😓");
             }
 
-            //Obteniendo id de usuario
+            //Obteniendo usuario
             var Usuario = await (from u in _context.Usuarios
-                                 where u.U_name == uname
+                                 where u.U_name == u_name
                                  select u).FirstOrDefaultAsync();
 
             // Obteniendo redes sociales usuario
@@ -101,7 +101,7 @@ namespace PARCIAL_3_DPWA.Controllers
 
             if (UserModel == null)
             {
-                return NotFound($"El usuario {uname} no existe 😓");
+                return NotFound($"El usuario {u_name} no existe 😓");
             }
 
             return Ok(UserModel);
@@ -109,15 +109,28 @@ namespace PARCIAL_3_DPWA.Controllers
 
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        [HttpPut("{u_name}")]
+        public async Task<IActionResult> PutUsuario(string u_name, Usuario usuario)
         {
-            if (id != usuario.Id_usuario)
+            if (u_name != usuario.U_name)
             {
-                return BadRequest($"La peticion del usuario no procedio 😓");
+                return BadRequest($"No es posible cambiar el nombre de usuario {u_name} 😓");
             }
 
-            _context.Entry(usuario).State = EntityState.Modified;
+            // Extrayecto objeto usuario
+            Usuario? usuarioDb = await (from u in _context.Usuarios
+                                        where u.U_name == usuario.U_name
+                                        select u).FirstOrDefaultAsync();
+
+            // Modificando el objeto
+            usuarioDb.Urlfoto = usuario.Urlfoto;
+            usuarioDb.Nombres = usuario.Nombres;
+            usuarioDb.Apellidos = usuario.Apellidos;
+            usuarioDb.Correo = usuario.Correo;
+            usuarioDb.Intro = usuario.Intro;
+
+
+            _context.Entry(usuarioDb).State = EntityState.Modified;
 
             try
             {
@@ -125,7 +138,7 @@ namespace PARCIAL_3_DPWA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UsuarioExists(id))
+                if (!UsuarioExists(u_name))
                 {
                     return NotFound($"El usuario no existe 😓");
                 }
@@ -135,7 +148,7 @@ namespace PARCIAL_3_DPWA.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Usuarios
@@ -145,37 +158,41 @@ namespace PARCIAL_3_DPWA.Controllers
         {
             if (_context.Usuarios == null)
             {
-                return Problem("Entity set 'railwayContext.Usuarios'  is null.");
+                return Problem("Entity set 'railwayContext.Usuarios'  es nulo.");
             }
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsuario", new { uname = usuario.U_name }, usuario);
+            return CreatedAtAction("GetUsuario", new { u_name = usuario.U_name }, usuario);
         }
 
         // DELETE: api/Usuarios/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        [HttpDelete("{u_name}")]
+        public async Task<IActionResult> DeleteUsuario(String u_name)
         {
             if (_context.Usuarios == null)
             {
-                return NotFound();
+                return NotFound($"El usuario {u_name} no existe 😓");
             }
-            var usuario = await _context.Usuarios.FindAsync(id);
+            //Obteniendo usuario
+            var usuario = await (from u in _context.Usuarios
+                                 where u.U_name == u_name
+                                 select u).FirstOrDefaultAsync();
+
             if (usuario == null)
             {
-                return NotFound();
+                return NotFound($"El usuario {u_name} no existe 😓");
             }
 
             _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
-        private bool UsuarioExists(int id)
+        private bool UsuarioExists(String u_name)
         {
-            return (_context.Usuarios?.Any(e => e.Id_usuario == id)).GetValueOrDefault();
+            return (_context.Usuarios?.Any(e => e.U_name == u_name)).GetValueOrDefault();
         }
     }
 }
