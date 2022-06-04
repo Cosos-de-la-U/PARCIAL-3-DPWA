@@ -119,7 +119,6 @@ namespace PARCIAL_3_DPWA.Controllers
 
             // Modificando el objeto
             usuarioDb.UrlFoto = usuario.UrlFoto;
-            usuarioDb.U_name = usuario.U_name;
             usuarioDb.Nombres = usuario.Nombres;
             usuarioDb.Apellidos = usuario.Apellidos;
             usuarioDb.Correo = usuario.Correo;
