@@ -171,7 +171,7 @@ namespace PARCIAL_3_DPWA.Models
                     .HasMaxLength(100)
                     .HasColumnName("u_name");
 
-                entity.Property(e => e.Urlfoto).HasColumnName("urlfoto");
+                entity.Property(e => e.UrlFoto).HasColumnName("urlfoto");
             });
 
             modelBuilder.HasSequence("chunk_constraint_name", "_timescaledb_catalog");

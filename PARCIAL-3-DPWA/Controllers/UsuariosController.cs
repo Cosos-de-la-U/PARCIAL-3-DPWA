@@ -89,7 +89,7 @@ namespace PARCIAL_3_DPWA.Controllers
             {
                 Id_usuario = Usuario.Id_usuario,
                 U_name = Usuario.U_name,
-                Urlfoto = Usuario.Urlfoto,
+                UrlFoto = Usuario.UrlFoto,
                 Nombres = Usuario.Nombres,
                 Apellidos = Usuario.Apellidos,
                 Correo = Usuario.Correo,
@@ -118,7 +118,7 @@ namespace PARCIAL_3_DPWA.Controllers
                                         select u).FirstOrDefaultAsync();
 
             // Modificando el objeto
-            usuarioDb.Urlfoto = usuario.Urlfoto;
+            usuarioDb.UrlFoto = usuario.UrlFoto;
             usuarioDb.U_name = usuario.U_name;
             usuarioDb.Nombres = usuario.Nombres;
             usuarioDb.Apellidos = usuario.Apellidos;
