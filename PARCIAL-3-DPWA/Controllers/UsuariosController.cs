@@ -112,18 +112,14 @@ namespace PARCIAL_3_DPWA.Controllers
         [HttpPut("{u_name}")]
         public async Task<IActionResult> PutUsuario(string u_name, Usuario usuario)
         {
-            if (u_name != usuario.U_name)
-            {
-                return BadRequest($"No es posible cambiar el nombre de usuario {u_name} 😓");
-            }
-
             // Extrayecto objeto usuario
             Usuario? usuarioDb = await (from u in _context.Usuarios
-                                        where u.U_name == usuario.U_name
+                                        where u.U_name == u_name
                                         select u).FirstOrDefaultAsync();
 
             // Modificando el objeto
             usuarioDb.Urlfoto = usuario.Urlfoto;
+            usuarioDb.U_name = usuario.U_name;
             usuarioDb.Nombres = usuario.Nombres;
             usuarioDb.Apellidos = usuario.Apellidos;
             usuarioDb.Correo = usuario.Correo;
