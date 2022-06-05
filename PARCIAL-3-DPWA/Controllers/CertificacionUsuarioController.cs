@@ -247,7 +247,6 @@ namespace PARCIAL_3_DPWA.Controllers
                           where u.Id_usuario == idUsuario
                           select u.U_name).FirstOrDefaultAsync();
         }
-
         private async Task<Usuario> ObtenerUsuario(String u_name)
         {
             //Obteniendo usuario id

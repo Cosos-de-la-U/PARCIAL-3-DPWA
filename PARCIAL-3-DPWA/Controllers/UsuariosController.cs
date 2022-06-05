@@ -153,7 +153,7 @@ namespace PARCIAL_3_DPWA.Controllers
         {
             if (_context.Usuarios == null)
             {
-                return Problem("Entity set 'railwayContext.Usuarios'  es nulo.");
+                return Problem("Entity set 'railwayContext.Usuarios' es nulo.");
             }
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
