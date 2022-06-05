@@ -32,34 +32,33 @@ namespace PARCIAL_3_DPWA.Controllers
         }
 
         // GET: api/Redes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Red>> GetRed(int id)
+        [HttpGet("{red}")]
+        public async Task<ActionResult<Red>> GetRed(String red)
         {
           if (_context.Reds == null)
           {
               return NotFound();
           }
-            var red = await _context.Reds.FindAsync(id);
+            var redData = await _context.Reds.FindAsync(ObtenerIdRed(red).Result);
 
-            if (red == null)
+            if (redData == null)
             {
                 return NotFound();
             }
 
-            return red;
+            return redData;
         }
 
         // PUT: api/Redes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRed(int id, Red red)
+        [HttpPut("{red}")]
+        public async Task<IActionResult> PutRed(String red, Red redData)
         {
-            if (id != red.Id_red)
-            {
-                return BadRequest();
-            }
+            var id = ObtenerIdRed(red).Result;
 
-            _context.Entry(red).State = EntityState.Modified;
+            redData.Id_red = id;
+
+            _context.Entry(redData).State = EntityState.Modified;
 
             try
             {
@@ -92,24 +91,25 @@ namespace PARCIAL_3_DPWA.Controllers
             _context.Reds.Add(red);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRed", new { id = red.Id_red }, red);
+            return CreatedAtAction("GetRed", new { red = red.Nombre }, red);
         }
 
         // DELETE: api/Redes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRed(int id)
+        [HttpDelete("{red}")]
+        public async Task<IActionResult> DeleteRed(String red)
         {
             if (_context.Reds == null)
             {
                 return NotFound();
             }
-            var red = await _context.Reds.FindAsync(id);
-            if (red == null)
+
+            var redData = await _context.Reds.FindAsync(ObtenerIdRed(red).Result);
+            if (redData == null)
             {
                 return NotFound();
             }
 
-            _context.Reds.Remove(red);
+            _context.Reds.Remove(redData);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,6 +118,14 @@ namespace PARCIAL_3_DPWA.Controllers
         private bool RedExists(int id)
         {
             return (_context.Reds?.Any(e => e.Id_red == id)).GetValueOrDefault();
+        }
+
+        private async Task<int> ObtenerIdRed(String nombreRed)
+        {
+            //Obteniendo certificado id
+            return await (from r in _context.Reds
+                          where r.Nombre == nombreRed
+                          select r.Id_red).FirstOrDefaultAsync();
         }
     }
 }
