@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PARCIAL_3_DPWA.Models.ViewModel
+namespace PARCIAL_3_DPWA.Models.ViewModel.Usuario
 {
     public class UsuarioModel
     {
@@ -10,7 +10,7 @@ namespace PARCIAL_3_DPWA.Models.ViewModel
         {
             Redes_sociales = new HashSet<RedesModel>();
             Certificacion = new HashSet<CertificacionModel>();
-        }   
+        }
 
         public int Id_usuario { get; set; }
         public string? U_name { get; set; }

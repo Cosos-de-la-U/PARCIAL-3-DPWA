@@ -1,4 +1,4 @@
-﻿namespace PARCIAL_3_DPWA.Models.ViewModel
+﻿namespace PARCIAL_3_DPWA.Models.ViewModel.Usuario
 {
     public class RedesModel
     {

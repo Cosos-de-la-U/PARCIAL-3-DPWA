@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PARCIAL_3_DPWA.Models;
-using PARCIAL_3_DPWA.Models.ViewModel;
+using PARCIAL_3_DPWA.Models.ViewModel.Usuario;
 
 namespace PARCIAL_3_DPWA.Controllers
 {
@@ -189,5 +189,6 @@ namespace PARCIAL_3_DPWA.Controllers
         {
             return (_context.Usuarios?.Any(e => e.U_name == u_name)).GetValueOrDefault();
         }
+
     }
 }

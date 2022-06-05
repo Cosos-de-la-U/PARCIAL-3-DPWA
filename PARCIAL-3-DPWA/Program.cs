@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PARCIAL_3_DPWA.Models;
+using PARCIAL_3_DPWA.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
