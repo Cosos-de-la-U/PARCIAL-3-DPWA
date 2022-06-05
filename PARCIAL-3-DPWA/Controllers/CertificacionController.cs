@@ -33,33 +33,33 @@ namespace PARCIAL_3_DPWA.Controllers
 
         // GET: api/Certificacion/5
         [HttpGet("{certificacion}")]
-        public async Task<ActionResult<Certificacion>> GetCertificacion(int id)
+        public async Task<ActionResult<Certificacion>> GetCertificacion(String certificacion)
         {
           if (_context.Certificacions == null)
           {
               return NotFound();
           }
-            var certificacion = await _context.Certificacions.FindAsync(id);
 
-            if (certificacion == null)
+            var certificacionData = await _context.Certificacions.FindAsync(ObtenerIdCertificado(certificacion).Result);
+
+            if (certificacionData == null)
             {
                 return NotFound();
             }
 
-            return certificacion;
+            return certificacionData;
         }
 
         // PUT: api/Certificacion/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{certificacion}")]
-        public async Task<IActionResult> PutCertificacion(int id, Certificacion certificacion)
+        public async Task<IActionResult> PutCertificacion(String certificacion, Certificacion certificacionData)
         {
-            if (id != certificacion.Id_certificacion)
-            {
-                return BadRequest();
-            }
+            var id = ObtenerIdCertificado(certificacion).Result;
 
-            _context.Entry(certificacion).State = EntityState.Modified;
+            certificacionData.Id_certificacion = id;
+
+            _context.Entry(certificacionData).State = EntityState.Modified;
 
             try
             {
@@ -92,24 +92,27 @@ namespace PARCIAL_3_DPWA.Controllers
             _context.Certificacions.Add(certificacion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCertificacion", new { id = certificacion.Id_certificacion }, certificacion);
+            return CreatedAtAction("GetCertificacion", new { certificacion = certificacion.Nombre }, certificacion);
         }
 
         // DELETE: api/Certificacion/5
         [HttpDelete("{certificacion}")]
-        public async Task<IActionResult> DeleteCertificacion(int id)
+        public async Task<IActionResult> DeleteCertificacion(String certificacion)
         {
+            var id = ObtenerIdCertificado(certificacion).Result;
+
             if (_context.Certificacions == null)
             {
                 return NotFound();
             }
-            var certificacion = await _context.Certificacions.FindAsync(id);
-            if (certificacion == null)
+            var certificacionData = await _context.Certificacions.FindAsync(id);
+
+            if (certificacionData == null)
             {
                 return NotFound();
             }
 
-            _context.Certificacions.Remove(certificacion);
+            _context.Certificacions.Remove(certificacionData);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -118,6 +121,14 @@ namespace PARCIAL_3_DPWA.Controllers
         private bool CertificacionExists(int id)
         {
             return (_context.Certificacions?.Any(e => e.Id_certificacion == id)).GetValueOrDefault();
+        }
+
+        private async Task<int> ObtenerIdCertificado(String nombreCertificacion)
+        {
+            //Obteniendo certificado id
+            return await (from c in _context.Certificacions
+                          where c.Nombre == nombreCertificacion
+                          select c.Id_certificacion).FirstOrDefaultAsync();
         }
     }
 }
