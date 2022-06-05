@@ -64,7 +64,7 @@ namespace PARCIAL_3_DPWA.Controllers
                                           Profesion = gradU.Profesion,
                                           Universidad = gradU.Universidad,
                                           Objetivos = gradU.Objetivos
-                                      }).FirstAsync();
+                                      }).FirstOrDefaultAsync();
 
             // Obteniendo experiencia de usuario
             var ExperienciaUsuario = await (from expeU in _context.ExperienciaByUsuarios
