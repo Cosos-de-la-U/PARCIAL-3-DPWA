@@ -123,18 +123,30 @@ namespace PARCIAL_3_DPWA.Controllers
 
         // PUT: api/CertificacionUsuario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{u_name}")]
-        public async Task<IActionResult> PutCertificacionByUsuario(String u_name, CertificacionByUsuario certificacionByUsuario)
+        [HttpPut("{u_name}/{certificadoAnterior}/{certificadoNuevo}")]
+        public async Task<IActionResult> PutCertificacionByUsuario(String u_name, String certificadoAnterior, String certificadoNuevo)
         {
-            // Buscamos el ID del usuario
-            var id = ObtenerIdUsuario(u_name).Result;
+            //Obteniendo usuario id
+            var usuarioId = ObtenerIdUsuario(u_name).Result;
 
-            if (id != certificacionByUsuario.Id_usuario)
+            //Obteniendo certificacion anterior id
+            var certificacionAnteriorId = ObtenerIdCertificado(certificadoAnterior).Result;
+
+            //Buscando id de CertificacionByUsuarios
+            var certificacionByUsuarios = ObtenerObjetoCertificacionByUsuarios(usuarioId, certificacionAnteriorId).Result;
+
+            if (usuarioId != certificacionByUsuarios.Id_usuario)
             {
                 return BadRequest();
             }
 
-            _context.Entry(certificacionByUsuario).State = EntityState.Modified;
+            //Obteniendo certificacion nueva id
+            var certificacionNuevaId = ObtenerIdCertificado(certificadoNuevo).Result;
+
+            //Cambiando Certificado
+            certificacionByUsuarios.Id_certificacion = certificacionNuevaId;
+
+            _context.Entry(certificacionByUsuarios).State = EntityState.Modified;
 
             try
             {
@@ -142,7 +154,7 @@ namespace PARCIAL_3_DPWA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CertificacionByUsuarioExists(id))
+                if (!CertificacionByUsuarioExists(usuarioId))
                 {
                     return NotFound();
                 }
@@ -258,20 +270,13 @@ namespace PARCIAL_3_DPWA.Controllers
                           where cu.Id_usuario == idUsuario && cu.Id_certificacion == idCertificado
                           select cu.Id_certificacion_by_Usuario).FirstOrDefaultAsync();
         }
-        /*private async IAsyncEnumerator<Task<CertificacionModel>> CertificacionUsuarioData(int usuarioId)
+
+        private async Task<CertificacionByUsuario> ObtenerObjetoCertificacionByUsuarios(int idUsuario, int idCertificado)
         {
-            yield return await (from certiU in _context.CertificacionByUsuarios
-                          join certi in _context.Certificacions on certiU.Id_certificacion equals certi.Id_certificacion
-                          where certiU.Id_usuario == usuarioId && certiU.Id_certificacion == certi.Id_certificacion
-                          select new CertificacionModel
-                          {
-                              Nombre = certi.Nombre,
-                              Institucion = certi.Institucion,
-                              Link = certi.Link,
-                              Descripcion = certi.Descripcion,
-                              Objetivos = certi.Obtivos
-                          }).Rever.ToListAsync();
+            //Obteniendo certificado id
+            return await (from cu in _context.CertificacionByUsuarios
+                          where cu.Id_usuario == idUsuario && cu.Id_certificacion == idCertificado
+                          select cu).FirstOrDefaultAsync();
         }
-        */
     }
 }
