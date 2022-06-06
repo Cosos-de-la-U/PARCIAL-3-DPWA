@@ -54,10 +54,7 @@ namespace PARCIAL_3_DPWA.Controllers
                 GradoAcademicoModel GradoAcademicoModel = new GradoAcademicoModel
                 {
                     U_name = usuarioU_name,
-                    Profesion = gradoAcademico.Profesion,
-                    Universidad = gradoAcademico.Universidad,
-                    Objetivos = gradoAcademico.Objetivos
-
+                    
                 };
 
                 ListaGradoAcademicoModel.Add(GradoAcademicoModel);
@@ -76,6 +73,11 @@ namespace PARCIAL_3_DPWA.Controllers
 
             var gradoAcademicoUsuario = ObtenerObjetoGradoAcademicoByUsuarios(usuarioId).Result;
 
+            if (gradoAcademicoUsuario == null)
+            {
+                return NotFound($"El usuario {u_name} no tiene grado academico 😓");
+            }
+
             //Uniendo
             GradoAcademicoModel GradoAcademicoModel = new GradoAcademicoModel
             {
@@ -85,6 +87,11 @@ namespace PARCIAL_3_DPWA.Controllers
                 Objetivos = gradoAcademicoUsuario.Objetivos
 
             };
+
+            if (GradoAcademicoModel == null)
+            {
+                return NotFound($"El usuario {u_name} no tiene grado academico 😓");
+            }
 
             return Ok(GradoAcademicoModel);
     }

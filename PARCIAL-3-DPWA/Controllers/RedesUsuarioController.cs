@@ -89,7 +89,7 @@ namespace PARCIAL_3_DPWA.Controllers
             // Obteniendo redes de usuario
             var redUsuarioData = await (from redU in _context.RedByUsers
                                         join re in _context.Reds on redU.Id_red equals re.Id_red
-                                        where redU.Id_usuario == redU.Id_usuario && redU.Id_red == redU.Id_red
+                                        where redU.Id_usuario == usuarioId && redU.Id_red == redU.Id_red
                                         select new RedesModel
                                         {
                                             Nombre = re.Nombre,
@@ -106,8 +106,9 @@ namespace PARCIAL_3_DPWA.Controllers
 
             if (redUsuarioModel == null)
             {
-                return NotFound();
+                return NotFound($"El usuario {u_name} no tiene redes 😓");
             }
+
             return Ok(redUsuarioModel);
         }
 

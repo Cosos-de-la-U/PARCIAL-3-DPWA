@@ -1,8 +1,8 @@
-﻿namespace PARCIAL_3_DPWA.Models.ViewModel.Usuario
+﻿
+namespace PARCIAL_3_DPWA.Models.ViewModel.ExperienciaUsuario
 {
-    public class ExperienciaModel
+    public class PutExperienciaUsuarioModel
     {
-
         public string? Nombre_proyecto { get; set; }
         public string? Rol { get; set; }
         public string? Resumen { get; set; }
