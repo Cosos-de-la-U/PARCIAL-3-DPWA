@@ -10,6 +10,7 @@ namespace PARCIAL_3_DPWA.Models.ViewModel.Usuario
         {
             Redes_sociales = new HashSet<RedesModel>();
             Certificacion = new HashSet<CertificacionModel>();
+            Experiencia = new HashSet<ExperienciaModel>();
         }
 
         public int Id_usuario { get; set; }
@@ -22,5 +23,6 @@ namespace PARCIAL_3_DPWA.Models.ViewModel.Usuario
         public virtual ICollection<RedesModel> Redes_sociales { get; set; }
         public virtual GradoAcademicoModel Grado_academico { get; set; }
         public virtual ICollection<CertificacionModel> Certificacion { get; set; }
+        public virtual ICollection<ExperienciaModel> Experiencia { get; set; }
     }
 }

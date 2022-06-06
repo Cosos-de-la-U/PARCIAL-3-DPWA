@@ -68,8 +68,15 @@ namespace PARCIAL_3_DPWA.Controllers
 
             // Obteniendo experiencia de usuario
             var ExperienciaUsuario = await (from expeU in _context.ExperienciaByUsuarios
-                                            where expeU.Id_usuario == expeU.Id_usuario
-                                            select expeU).ToListAsync();
+                                            where expeU.Id_usuario == Usuario.Id_usuario
+                                            select new ExperienciaModel
+                                            {
+                                                Nombre_proyecto = expeU.Nombre_proyecto,
+                                                Rol = expeU.Rol,
+                                                Resumen = expeU.Resumen,
+                                                Responsabilidades = expeU.Responsabilidades,
+                                                Tecnologias = expeU.Tecnologias
+                                            }).ToListAsync();
 
             // Obteniendo certificaciones de usuario
             var CertificacionUsuario = await (from certiU in _context.CertificacionByUsuarios
@@ -96,7 +103,8 @@ namespace PARCIAL_3_DPWA.Controllers
                 Intro = Usuario.Intro,
                 Redes_sociales = RedesUsuario,
                 Grado_academico = GradoAcademicoUsuario,
-                Certificacion = CertificacionUsuario
+                Certificacion = CertificacionUsuario,
+                Experiencia = ExperienciaUsuario
             };
 
             if (UserModel == null)
