@@ -12,7 +12,12 @@ builder.Services.AddEndpointsApiExplorer();
 // CORS
 builder.Services.AddCors();
 // Swagger
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+    c.IgnoreObsoleteActions();
+    c.IgnoreObsoleteProperties();
+    c.CustomSchemaIds(type => type.FullName);
+});
 
 //DI
 builder.Services.AddDbContext<railwayContext>(options =>

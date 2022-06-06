@@ -5,7 +5,8 @@ namespace PARCIAL_3_DPWA.Models.ViewModel.GradoAcademico
     public class UnameGradoAcademicoModel
     {
         public String U_name { get; set; }
-        public String nombreRed{ get; set; }
-        public String accessLink { get; set; }
+        public string Profesion { get; set; }
+        public string Universidad { get; set; }
+        public string Objetivos { get; set; }
     }
 }

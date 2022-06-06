@@ -30,9 +30,9 @@ namespace PARCIAL_3_DPWA.Controllers
                 return NotFound();
             }
             // Sacando datos ordenados
-            var GradoAcademicoByUsuario = await (from redU in _context.GradoAcademicoByUsuarios
-                                      orderby redU.Id_usuario ascending
-                                      select redU).ToListAsync();
+            var GradoAcademicoByUsuario = await (from gaU in _context.GradoAcademicoByUsuarios
+                                      orderby gaU.Id_usuario ascending
+                                      select gaU).ToListAsync();
 
             List<GradoAcademicoModel> ListaGradoAcademicoModel = new List<GradoAcademicoModel>();
             foreach (GradoAcademicoByUsuario gradoAcademico in GradoAcademicoByUsuario)
@@ -92,14 +92,22 @@ namespace PARCIAL_3_DPWA.Controllers
         // PUT: api/GradoAcademicoUsuario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{u_name}")]
-        public async Task<IActionResult> PutGradoAcademicoByUsuario(int id, GradoAcademicoByUsuario gradoAcademicoByUsuario)
+        public async Task<IActionResult> PutGradoAcademicoByUsuario(String u_name, PutGradoAcademicoModel gradoAcademico)
         {
-            if (id != gradoAcademicoByUsuario.Id_grado_academico_by_usuario)
-            {
-                return BadRequest();
-            }
+            // idUsuario
+            var idUsuario = ObtenerIdUsuario(u_name).Result;
 
-            _context.Entry(gradoAcademicoByUsuario).State = EntityState.Modified;
+            // Extrayecto objeto usuario
+            GradoAcademicoByUsuario? gradoAcademicoDb = await (from ga in _context.GradoAcademicoByUsuarios
+                                        where ga.Id_usuario == idUsuario
+                                        select ga).FirstOrDefaultAsync();
+
+            // Modificando el objeto
+            gradoAcademicoDb.Profesion = gradoAcademico.Profesion;
+            gradoAcademicoDb.Universidad = gradoAcademico.Universidad;
+            gradoAcademicoDb.Objetivos = gradoAcademico.Objetivos;
+
+            _context.Entry(gradoAcademicoDb).State = EntityState.Modified;
 
             try
             {
@@ -107,9 +115,9 @@ namespace PARCIAL_3_DPWA.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GradoAcademicoByUsuarioExists(id))
+                if (!GradoAcademicoByUsuarioExists(idUsuario))
                 {
-                    return NotFound();
+                    return NotFound($"El usuario no existe 😓");
                 }
                 else
                 {
@@ -117,36 +125,60 @@ namespace PARCIAL_3_DPWA.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/GradoAcademicoUsuario
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<GradoAcademicoByUsuario>> PostGradoAcademicoByUsuario(GradoAcademicoByUsuario gradoAcademicoByUsuario)
+        public async Task<ActionResult<GradoAcademicoByUsuario>> PostGradoAcademicoByUsuario(UnameGradoAcademicoModel gradoAcademicoByUsuario)
         {
-          if (_context.GradoAcademicoByUsuarios == null)
-          {
-              return Problem("Entity set 'railwayContext.GradoAcademicoByUsuarios'  is null.");
-          }
-            _context.GradoAcademicoByUsuarios.Add(gradoAcademicoByUsuario);
+            if (_context.GradoAcademicoByUsuarios == null)
+            {
+                return Problem("Entity set 'railwayContext.GradoAcademicoByUser' es nulo.");
+            }
+
+            //Obteniendo usuario id
+            var usuarioId = ObtenerIdUsuario(gradoAcademicoByUsuario.U_name).Result;
+
+            if (ObtenerObjetoGradoAcademicoByUsuarios(usuarioId).Result != null)
+            {
+                    return BadRequest($"El usuario {gradoAcademicoByUsuario.U_name} ya tiene un grado academico 😓");
+            }
+
+            //Juntando todo
+            GradoAcademicoByUsuario gradoAcademicoByUser= new GradoAcademicoByUsuario
+            {
+                Profesion = gradoAcademicoByUsuario.Profesion,
+                Universidad = gradoAcademicoByUsuario.Universidad,
+                Objetivos = gradoAcademicoByUsuario.Objetivos,
+                Id_usuario = usuarioId
+            };
+
+            _context.GradoAcademicoByUsuarios.Add(gradoAcademicoByUser);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGradoAcademicoByUsuario", new { id = gradoAcademicoByUsuario.Id_grado_academico_by_usuario }, gradoAcademicoByUsuario);
+            return await GetGradoAcademicoByUsuario(gradoAcademicoByUsuario.U_name);
         }
 
         // DELETE: api/GradoAcademicoUsuario/5
         [HttpDelete("{u_name}")]
-        public async Task<IActionResult> DeleteGradoAcademicoByUsuario(int id)
+        public async Task<IActionResult> DeleteGradoAcademicoByUsuario(String u_name)
         {
+            //Obteniendo usuario id
+            var usuarioId = ObtenerIdUsuario(u_name).Result;
+
+            //Obteniendo gradoAcademico id
+            var gradoAcademicoId = ObtenerIdGradoAcademico(usuarioId).Result;
+
             if (_context.GradoAcademicoByUsuarios == null)
             {
-                return NotFound();
+                return NotFound($"El usuario {u_name} no se encontro 😓");
             }
-            var gradoAcademicoByUsuario = await _context.GradoAcademicoByUsuarios.FindAsync(id);
+            var gradoAcademicoByUsuario = await _context.GradoAcademicoByUsuarios.FindAsync(gradoAcademicoId);
             if (gradoAcademicoByUsuario == null)
             {
-                return NotFound();
+                return NotFound($"El usuario {u_name} no se encontro 😓");
             }
 
             _context.GradoAcademicoByUsuarios.Remove(gradoAcademicoByUsuario);
@@ -173,25 +205,16 @@ namespace PARCIAL_3_DPWA.Controllers
                           where u.Id_usuario == idUsuario
                           select u.U_name).FirstOrDefaultAsync();
         }
-        private async Task<int> ObtenerIdRed(String nombreRed)
+        private async Task<int> ObtenerIdGradoAcademico(int idUsuario)
         {
-            //Obteniendo red id
-            return await (from r in _context.Reds
-                          where r.Nombre == nombreRed
-                          select r.Id_red).FirstOrDefaultAsync();
+            //Obteniendo id gradoAcademico
+            return await (from ga in _context.GradoAcademicoByUsuarios
+                          where ga.Id_usuario == idUsuario
+                          select ga.Id_grado_academico_by_usuario).FirstOrDefaultAsync();
         }
-
-        private async Task<int> ObtenerRedByUsuarios(int idUsuario, int idRed)
-        {
-            //Obteniendo red id
-            return await (from r in _context.RedByUsers
-                          where r.Id_usuario == idUsuario && r.Id_red == idRed
-                          select r.Id_red_by_user).FirstOrDefaultAsync();
-        }
-
         private async Task<GradoAcademicoByUsuario> ObtenerObjetoGradoAcademicoByUsuarios(int idUsuario)
         {
-            //Obteniendo RedByUsuario
+            //Obteniendo gradoAcademicoByUsuario
             return await (from gaU in _context.GradoAcademicoByUsuarios
                           where gaU.Id_usuario == idUsuario
                           select gaU).FirstOrDefaultAsync();
