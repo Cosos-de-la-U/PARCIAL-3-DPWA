@@ -37,7 +37,7 @@ namespace PARCIAL_3_DPWA.Controllers
             List<ExperienciaUsuarioModel> ListaExperienciaModel = new List<ExperienciaUsuarioModel>();
             foreach (ExperienciaByUsuario Experiencia in ExperienciaByUsuario)
             {
-                //Obteniendo usuario id
+                //Obteniendo usuario
                 var usuarioU_name = ObtenerU_nameUsuario(Experiencia.Id_usuario ?? default(int)).Result;
 
                 // Verificando que hayan dados en la lista
@@ -50,15 +50,23 @@ namespace PARCIAL_3_DPWA.Controllers
                     };
                 }
 
+                // Obteniendo Objeto
+                var ExpUsuarioData = await (from expU in _context.ExperienciaByUsuarios
+                                                      where expU.Id_usuario == Experiencia.Id_usuario
+                                                      select new PutExperienciaUsuarioModel
+                                                      {
+                                                          Nombre_proyecto = expU.Nombre_proyecto,
+                                                          Rol = expU.Rol,
+                                                          Resumen = expU.Resumen,
+                                                          Responsabilidades = expU.Responsabilidades,
+                                                          Tecnologias = expU.Tecnologias
+                                                      }).ToListAsync();
+
                 //Uniendo
                 ExperienciaUsuarioModel ExperienciaModel = new ExperienciaUsuarioModel
                 {
                     U_name = usuarioU_name,
-                    Nombre_proyecto = Experiencia.Nombre_proyecto,
-                    Rol = Experiencia.Rol,
-                    Resumen = Experiencia.Resumen,
-                    Responsabilidades = Experiencia.Responsabilidades,
-                    Tecnologias = Experiencia.Tecnologias
+                    Experiencia = ExpUsuarioData
                 };
 
                 ListaExperienciaModel.Add(ExperienciaModel);
@@ -75,17 +83,23 @@ namespace PARCIAL_3_DPWA.Controllers
             //Obteniendo usuario id
             var usuarioId = ObtenerIdUsuario(u_name).Result;
 
-            var ExperienciaUsuario = ObtenerObjetoExperienciaByUsuarios(usuarioId).Result;
+            // Obteniendo Objeto
+            var ExpUsuarioData = await (from expU in _context.ExperienciaByUsuarios
+                                        where expU.Id_usuario == usuarioId
+                                        select new PutExperienciaUsuarioModel
+                                        {
+                                            Nombre_proyecto = expU.Nombre_proyecto,
+                                            Rol = expU.Rol,
+                                            Resumen = expU.Resumen,
+                                            Responsabilidades = expU.Responsabilidades,
+                                            Tecnologias = expU.Tecnologias
+                                        }).ToListAsync();
 
             //Uniendo
             ExperienciaUsuarioModel ExperienciaModel = new ExperienciaUsuarioModel
             {
                 U_name = u_name,
-                Nombre_proyecto = ExperienciaUsuario.Nombre_proyecto,
-                Rol = ExperienciaUsuario.Rol,
-                Resumen = ExperienciaUsuario.Resumen,
-                Responsabilidades = ExperienciaUsuario.Responsabilidades,
-                Tecnologias = ExperienciaUsuario.Tecnologias
+                Experiencia = ExpUsuarioData
             };
 
             if (ExperienciaModel == null)
@@ -98,17 +112,17 @@ namespace PARCIAL_3_DPWA.Controllers
 
         // PUT: api/ExperienciaUsuario/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{u_name}")]
-        public async Task<IActionResult> PutExperienciaByUsuario(String u_name, PutExperienciaUsuarioModel experienciaByUsuario)
+        [HttpPut("{u_name}/{experiencia}")]
+        public async Task<IActionResult> PutExperienciaByUsuario(String u_name,String experiencia, PutExperienciaUsuarioModel experienciaByUsuario)
         {
             // idUsuario
             var idUsuario = ObtenerIdUsuario(u_name).Result;
 
             // Extrayecto objeto usuario
             ExperienciaByUsuario? ExperienciaDb = await (from ex in _context.ExperienciaByUsuarios
-                                                               where ex.Id_usuario == idUsuario
-                                                               select ex).FirstOrDefaultAsync();
-
+                                                               where ex.Id_usuario == idUsuario && ex.Nombre_proyecto == experiencia
+                                                         select ex).FirstOrDefaultAsync();
+            
             // Modificando el objeto
             ExperienciaDb.Nombre_proyecto = experienciaByUsuario.Nombre_proyecto;
             ExperienciaDb.Rol = experienciaByUsuario.Rol;
@@ -140,7 +154,7 @@ namespace PARCIAL_3_DPWA.Controllers
         // POST: api/ExperienciaUsuario
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ExperienciaByUsuario>> PostExperienciaByUsuario(ExperienciaUsuarioModel experienciaByUsuario)
+        public async Task<ActionResult<ExperienciaByUsuario>> PostExperienciaByUsuario(UnameExperienciaUsuarioModel experienciaByUsuario)
         {
             if (_context.GradoAcademicoByUsuarios == null)
             {
@@ -149,11 +163,6 @@ namespace PARCIAL_3_DPWA.Controllers
 
             //Obteniendo usuario id
             var usuarioId = ObtenerIdUsuario(experienciaByUsuario.U_name).Result;
-
-            if (ObtenerObjetoExperienciaByUsuarios(usuarioId).Result != null)
-            {
-                return BadRequest($"El usuario {experienciaByUsuario.U_name} ya tiene un experienciaByUsuarioData 😓");
-            }
 
             //Juntando todo
             ExperienciaByUsuario experienciaByUsuarioData = new ExperienciaByUsuario
@@ -173,23 +182,23 @@ namespace PARCIAL_3_DPWA.Controllers
         }
 
         // DELETE: api/ExperienciaUsuario/5
-        [HttpDelete("{u_name}")]
-        public async Task<IActionResult> DeleteExperienciaByUsuario(String u_name)
+        [HttpDelete("{u_name}/{experiencia}")]
+        public async Task<IActionResult> DeleteExperienciaByUsuario(String u_name, String experiencia)
         {
             //Obteniendo usuario id
             var usuarioId = ObtenerIdUsuario(u_name).Result;
 
             //Obteniendo Experiencia id
-            var ExperienciaId = ObtenerIdExperiencia(usuarioId).Result;
+            var ExperienciaId = ObtenerIdExperiencia(usuarioId, experiencia).Result;
 
             if (_context.ExperienciaByUsuarios == null)
             {
-                return NotFound($"El usuario {u_name} no se encontro 😓");
+                return NotFound($"El usuario {u_name} o experiencia {experiencia} no se encontro 😓");
             }
             var ExperienciaByUsuario = await _context.ExperienciaByUsuarios.FindAsync(ExperienciaId);
             if (ExperienciaByUsuario == null)
             {
-                return NotFound($"El usuario {u_name} no se encontro 😓");
+                return NotFound($"El usuario {u_name} o experiencia {experiencia} no se encontro 😓");
             }
 
             _context.ExperienciaByUsuarios.Remove(ExperienciaByUsuario);
@@ -221,6 +230,13 @@ namespace PARCIAL_3_DPWA.Controllers
             //Obteniendo id ExperienciaByUsuario
             return await (from ex in _context.ExperienciaByUsuarios
                           where ex.Id_usuario == idUsuario
+                          select ex.IdExperienciaByUsuario).FirstOrDefaultAsync();
+        }
+        private async Task<int> ObtenerIdExperiencia(int idUsuario, String nombre_proyecto)
+        {
+            //Obteniendo id ExperienciaByUsuario
+            return await (from ex in _context.ExperienciaByUsuarios
+                          where ex.Id_usuario == idUsuario && ex.Nombre_proyecto == nombre_proyecto
                           select ex.IdExperienciaByUsuario).FirstOrDefaultAsync();
         }
         private async Task<ExperienciaByUsuario> ObtenerObjetoExperienciaByUsuarios(int idUsuario)

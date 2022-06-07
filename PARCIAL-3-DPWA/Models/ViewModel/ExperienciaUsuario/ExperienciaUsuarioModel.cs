@@ -4,11 +4,11 @@ namespace PARCIAL_3_DPWA.Models.ViewModel.ExperienciaUsuario
 {
     public class ExperienciaUsuarioModel
     {
+        public ExperienciaUsuarioModel()
+        {
+            Experiencia = new HashSet<PutExperienciaUsuarioModel>();
+        }
         public String U_name { get; set; }
-        public string? Nombre_proyecto { get; set; }
-        public string? Rol { get; set; }
-        public string? Resumen { get; set; }
-        public string? Responsabilidades { get; set; }
-        public string? Tecnologias { get; set; }
+        public virtual ICollection<PutExperienciaUsuarioModel> Experiencia { get; set; }
     }
 }
