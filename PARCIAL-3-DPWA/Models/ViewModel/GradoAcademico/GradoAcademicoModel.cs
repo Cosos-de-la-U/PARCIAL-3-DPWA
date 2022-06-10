@@ -4,10 +4,11 @@ namespace PARCIAL_3_DPWA.Models.ViewModel.GradoAcademico
 {
     public class GradoAcademicoModel
     {
+        public GradoAcademicoModel()
+        {
+            GradoAcademico = new HashSet<PutGradoAcademicoModel>();
+        }
         public String U_name { get; set; }
-        public string Profesion { get; set; }
-        public string Universidad { get; set; }
-        public string Objetivos { get; set; }
-
+        public virtual ICollection<PutGradoAcademicoModel> GradoAcademico { get; set; }
     }
 }
